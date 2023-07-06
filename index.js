@@ -159,7 +159,7 @@ let heroku = {
   region: core.getInput("region"),
   stack: core.getInput("stack"),
   team: core.getInput("team"),
-  addonsList: core.getInput("addons") || [],
+  addonsList: core.getInput("addons") ? JSON.parse(core.getInput("addons")) : [],
   justCreate: core.getInput("justCreate") === "false" ? false : true,
 };
 
