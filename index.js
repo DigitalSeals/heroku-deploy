@@ -59,7 +59,7 @@ const addAddons = ({app_name, addonsList}) => {
   console.log('Adding addons', addonsList)
 
   for (let addon of addonsList) {
-    execSync(`heroku addons:create ${addon.name} --app=${app_name} ${!!addon.as? '--as=' + addon.as: ''}`);
+    execSync(`heroku addons:create ${addon.name} --app=${app_name} --wait ${!!addon.as? '--as=' + addon.as: ''}`);
   }
   console.log('Adding addons complete')
 }
