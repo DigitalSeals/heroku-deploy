@@ -55,6 +55,15 @@ const addConfig = ({ app_name, env_file, appdir }) => {
   }
 };
 
+const addAddons = ({app_name, addonsList}) => {
+  console.log('Adding addons', addonsList)
+
+  for (let addon of addonsList) {
+    execSync(`heroku addons:create ${addon.name} --app=${app_name} ${!!addon.as? '--as=' + addon.as: ''}`);
+  }
+  console.log('Adding addons complete')
+}
+
 const createProcfile = ({ procfile, appdir }) => {
   if (procfile) {
     fs.writeFileSync(path.join(appdir, "Procfile"), procfile);
@@ -144,13 +153,14 @@ let heroku = {
   checkstring: core.getInput("checkstring"),
   delay: parseInt(core.getInput("delay")),
   procfile: core.getInput("procfile"),
-  rollbackonhealthcheckfailed:
-    core.getInput("rollbackonhealthcheckfailed") === "false" ? false : true,
+  rollbackonhealthcheckfailed: core.getInput("rollbackonhealthcheckfailed") === "false" ? false : true,
   env_file: core.getInput("env_file"),
   justlogin: core.getInput("justlogin") === "false" ? false : true,
   region: core.getInput("region"),
   stack: core.getInput("stack"),
   team: core.getInput("team"),
+  addonsList: core.getInput("addons") || [],
+  justCreate: core.getInput("justCreate") === "false" ? false : true,
 };
 
 // Formatting
@@ -219,6 +229,18 @@ if (heroku.dockerBuildArgs) {
 
     addRemote(heroku);
     addConfig(heroku);
+
+    if (heroku.addonsList.length) {
+      addAddons(heroku);
+    }
+
+    if (heroku.addonsList.length) {
+      addAddons(heroku);
+    }
+
+    if (heroku.justCreate) {
+      return;
+    }
 
     try {
       deploy({ ...heroku, dontuseforce: true });
